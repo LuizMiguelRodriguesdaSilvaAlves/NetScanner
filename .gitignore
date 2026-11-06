@@ -1,0 +1,26 @@
+# Java / Maven
+java-app/target/
+*.class
+*.jar
+
+# Python
+__pycache__/
+*.py[cod]
+.python-version
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# IDEs and operating systems
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Local configuration and generated output
+.env
+.env.*
+reports/*
+!reports/.gitkeep
