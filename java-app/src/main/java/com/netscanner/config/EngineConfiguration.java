@@ -36,7 +36,7 @@ public record EngineConfiguration(String pythonExecutable, Path engineDirectory,
 
     private static long parseTimeout(String value) {
         if (value == null || value.isBlank()) {
-            return 10;
+            return 30;
         }
         try {
             long seconds = Long.parseLong(value);

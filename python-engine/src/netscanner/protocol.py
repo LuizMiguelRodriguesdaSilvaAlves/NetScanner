@@ -6,10 +6,11 @@ import platform
 from typing import Any
 
 from . import __version__
+from .host_discovery import DiscoveryError, discover_hosts
 
 PROTOCOL_VERSION = "1.0"
 MAX_REQUEST_BYTES = 1_048_576
-SUPPORTED_ACTIONS = {"system.ping"}
+SUPPORTED_ACTIONS = {"system.ping", "network.host_discovery"}
 
 
 def make_response(
@@ -40,9 +41,8 @@ def handle_request(request: Any) -> dict[str, Any]:
 
     request_id = request.get("request_id")
     if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 128:
-        request_id = None
         return make_response(
-            request_id=request_id,
+            request_id=None,
             success=False,
             error={"code": "INVALID_REQUEST", "message": "A non-empty request_id of at most 128 characters is required."},
         )
@@ -75,6 +75,20 @@ def handle_request(request: Any) -> dict[str, Any]:
                 "capabilities": sorted(SUPPORTED_ACTIONS),
             },
         )
+
+    if action == "network.host_discovery":
+        try:
+            return make_response(
+                request_id=request_id,
+                success=True,
+                data=discover_hosts(payload),
+            )
+        except DiscoveryError as exc:
+            return make_response(
+                request_id=request_id,
+                success=False,
+                error={"code": exc.code, "message": str(exc)},
+            )
 
     return make_response(
         request_id=request_id,
