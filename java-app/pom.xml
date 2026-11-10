@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netscanner</groupId>
     <artifactId>netscanner-java-app</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>NetScanner Java Application</name>
     <description>Java application and orchestration layer for NetScanner.</description>
     <properties>

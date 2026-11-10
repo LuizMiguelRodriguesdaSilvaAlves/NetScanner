@@ -7,10 +7,11 @@ from typing import Any
 
 from . import __version__
 from .host_discovery import DiscoveryError, discover_hosts
+from .port_scanner import PortScanError, scan_ports
 
 PROTOCOL_VERSION = "1.0"
 MAX_REQUEST_BYTES = 1_048_576
-SUPPORTED_ACTIONS = {"system.ping", "network.host_discovery"}
+SUPPORTED_ACTIONS = {"system.ping", "network.host_discovery", "network.port_scan"}
 
 
 def make_response(
@@ -84,6 +85,20 @@ def handle_request(request: Any) -> dict[str, Any]:
                 data=discover_hosts(payload),
             )
         except DiscoveryError as exc:
+            return make_response(
+                request_id=request_id,
+                success=False,
+                error={"code": exc.code, "message": str(exc)},
+            )
+
+    if action == "network.port_scan":
+        try:
+            return make_response(
+                request_id=request_id,
+                success=True,
+                data=scan_ports(payload),
+            )
+        except PortScanError as exc:
             return make_response(
                 request_id=request_id,
                 success=False,
