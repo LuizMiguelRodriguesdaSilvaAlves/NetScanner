@@ -32,13 +32,21 @@ def test_scan_detects_a_local_open_tcp_port(monkeypatch):
     assert result["open_count"] == 1
     assert result["open_ports"] == [port]
     assert result["results"][0]["state"] == "open"
+    assert result["results"][0]["service_hint"] is None
+    assert result["results"][0]["service_hint_method"] is None
     assert result["method"] == "tcp_connect"
     assert result["scanned_at"]
 
 
 def test_scan_returns_sorted_results_and_removes_duplicate_ports(monkeypatch):
     def fake_scan(target, port, *, timeout_seconds):
-        return {"port": port, "state": "closed", "latency_ms": 1.0}
+        return {
+            "port": port,
+            "state": "closed",
+            "latency_ms": 1.0,
+            "service_hint": None,
+            "service_hint_method": None,
+        }
 
     monkeypatch.setattr(port_scanner, "_scan_port", fake_scan)
     result = scan_ports({"target": "127.0.0.1", "ports": "81,80,80,82", "max_workers": 2})
@@ -72,7 +80,11 @@ def test_port_ranges_are_expanded_and_sorted(monkeypatch):
         port_scanner,
         "_scan_port",
         lambda target, port, *, timeout_seconds: {
-            "port": port, "state": "filtered", "latency_ms": 0.1
+            "port": port,
+            "state": "filtered",
+            "latency_ms": 0.1,
+            "service_hint": None,
+            "service_hint_method": None,
         },
     )
     result = scan_ports({"target": "127.0.0.1", "ports": "443,80-82", "max_workers": 4})
@@ -114,3 +126,49 @@ def test_protocol_routes_port_scan_and_preserves_request_id(monkeypatch):
     assert response["success"] is True
     assert response["request_id"] == "port-scan-test-001"
     assert response["data"]["open_ports"] == [80]
+
+
+class _FakeSocket:
+    def __init__(self, result):
+        self.result = result
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, traceback):
+        return False
+
+    def settimeout(self, timeout):
+        self.timeout = timeout
+
+    def connect_ex(self, address):
+        self.address = address
+        return self.result
+
+
+def test_open_known_port_includes_service_hint(monkeypatch):
+    monkeypatch.setattr(
+        port_scanner.socket,
+        "socket",
+        lambda *_args: _FakeSocket(0),
+    )
+
+    result = port_scanner._scan_port("127.0.0.1", 22, timeout_seconds=0.2)
+
+    assert result["state"] == "open"
+    assert result["service_hint"] == "SSH"
+    assert result["service_hint_method"] == "well_known_tcp_port"
+
+
+def test_closed_known_port_does_not_include_service_hint(monkeypatch):
+    monkeypatch.setattr(
+        port_scanner.socket,
+        "socket",
+        lambda *_args: _FakeSocket(10061),
+    )
+
+    result = port_scanner._scan_port("127.0.0.1", 22, timeout_seconds=0.2)
+
+    assert result["state"] == "closed"
+    assert result["service_hint"] is None
+    assert result["service_hint_method"] is None
