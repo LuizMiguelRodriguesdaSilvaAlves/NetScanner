@@ -2,6 +2,8 @@
 
 **Network Reconnaissance & Analysis Tool** — ferramenta educacional para descoberta e diagnóstico de dispositivos em redes próprias ou com autorização explícita.
 
+![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+
 > **Versão 0.4.0:** adiciona sugestões básicas de serviço aos resultados de portas TCP abertas, preservando a descoberta de hosts da v0.2.0, o scanner TCP da v0.3.0 e a integração Java/Python pelo protocolo JSON 1.0.
 
 ## O que entrou nesta versão
@@ -166,4 +168,12 @@ Consulte `docs/PROTOCOL.md` para o contrato de comunicação.
 - [ ] Persistência local com SQLite (histórico, perfis e resultados).
 - [ ] Interface JavaFX, relatórios e comparação de escaneamentos.
 
-**Licença:** ainda não definida.
+## Licença
+
+Este projeto está licenciado sob a **Apache License 2.0**. Consulte o arquivo [LICENSE](LICENSE) para obter o texto completo da licença.
+
+Copyright 2026 Luiz Miguel Rodrigues da Silva Alves.
+
+A licença permite uso, modificação e redistribuição, inclusive para fins comerciais, desde que suas condições sejam respeitadas. Avisos de copyright, atribuição e licença aplicáveis devem ser preservados. Distribuições de versões modificadas também devem indicar os arquivos que foram alterados, conforme a Apache License 2.0.
+
+Consulte também [NOTICE](NOTICE), caso esse arquivo seja incluído em uma distribuição.
