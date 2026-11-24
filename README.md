@@ -2,7 +2,7 @@
 
 **Network Reconnaissance & Analysis Tool** — ferramenta educacional para descoberta e diagnóstico de dispositivos em redes próprias ou com autorização explícita.
 
-![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 > **Versão 0.5.0 (em desenvolvimento):** introduz um dashboard JavaFX para as operações já implementadas, histórico local de varreduras em SQLite e indicadores das execuções recentes.
 
