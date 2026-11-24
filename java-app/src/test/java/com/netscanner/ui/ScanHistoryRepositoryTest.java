@@ -67,7 +67,7 @@ class ScanHistoryRepositoryTest {
     }
 
     @Test
-    void returnsRecentScansNewestFirst() throws SQLException {
+    void returnsRecentScansNewestFirst() throws Exception {
         ScanHistoryRepository repository =
                 new ScanHistoryRepository(temporaryDirectory.resolve("history.db"));
         ObjectNode first = MAPPER.createObjectNode().put("scanned_hosts", 4).put("active_hosts", 1);

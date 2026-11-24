@@ -313,7 +313,7 @@ public final class DashboardView extends BorderPane {
         summaryColumn.setCellValueFactory(cell -> new javafx.beans.property.ReadOnlyStringWrapper(
                 cell.getValue().summaryLabel()));
         historyTable.getColumns().setAll(dateColumn, typeColumn, targetColumn, summaryColumn);
-        historyTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        historyTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         historyTable.setItems(FXCollections.observableArrayList());
         historyTable.setPlaceholder(new Label("No scans saved yet. Run a discovery or TCP scan to begin."));
         historyTable.setPrefHeight(205);
@@ -337,7 +337,7 @@ public final class DashboardView extends BorderPane {
         latencyColumn.setCellValueFactory(cell -> new javafx.beans.property.ReadOnlyStringWrapper(
                 cell.getValue().latency()));
         resultsTable.getColumns().setAll(targetColumn, typeColumn, stateColumn, detailColumn, latencyColumn);
-        resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         resultsTable.setItems(FXCollections.observableArrayList());
         resultsTable.setPlaceholder(new Label("Results from your latest scan will appear here."));
         resultsTable.setPrefHeight(230);
