@@ -1,5 +1,6 @@
 package com.netscanner.app;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netscanner.config.EngineConfiguration;
 import com.netscanner.engine.PythonEngineClient;
@@ -72,10 +73,17 @@ public final class NetScannerApplication {
             int openPorts = response.data().path("open_count").asInt();
             int closedPorts = response.data().path("closed_count").asInt();
             int filteredPorts = response.data().path("filtered_count").asInt();
+            int serviceHints = 0;
+            for (JsonNode result : response.data().path("results")) {
+                if (result.path("service_hint").isTextual()) {
+                    serviceHints++;
+                }
+            }
             System.out.printf(
                     "TCP port scan completed: %d open, %d closed and %d filtered/inconclusive port(s) among %d scanned.%n",
                     openPorts, closedPorts, filteredPorts, scannedPorts
             );
+            System.out.printf("Known service hints: %d.%n", serviceHints);
         } else {
             System.out.println("NetScanner Java/Python integration: OK");
         }

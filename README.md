@@ -2,18 +2,18 @@
 
 **Network Reconnaissance & Analysis Tool** — ferramenta educacional para descoberta e diagnóstico de dispositivos em redes próprias ou com autorização explícita.
 
-> **Versão 0.3.0:** adiciona varredura TCP de portas em um endereço IPv4 privado/autorizado, mantendo a descoberta de hosts da v0.2.0 e a integração Java/Python pelo protocolo JSON 1.0.
+![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+
+> **Versão 0.4.0:** adiciona sugestões básicas de serviço aos resultados de portas TCP abertas, preservando a descoberta de hosts da v0.2.0, o scanner TCP da v0.3.0 e a integração Java/Python pelo protocolo JSON 1.0.
 
 ## O que entrou nesta versão
 
-- Nova ação **network.port_scan** no motor Python e integração com a aplicação Java.
-- Varredura TCP connect em um único endereço IPv4 por execução.
-- Seleção de portas por lista e intervalos, por exemplo `22,80,443,8000-8100`.
-- Limite de 1.024 portas únicas por execução.
-- Concorrência configurável, limitada a 128 workers, e timeout por conexão entre 100 e 3.000 ms.
-- Classificação dos resultados em `open`, `closed` e `filtered` (inconclusivo).
-- Validação de escopo restrita a redes privadas RFC 1918 e loopback.
-- Testes unitários e teste de integração Java/Python com uma porta TCP local.
+- Sugestões de serviço para portas TCP abertas com associações convencionais conhecidas.
+- Cada resultado de porta inclui `service_hint` e `service_hint_method`.
+- Portas fechadas, filtradas ou não mapeadas recebem `null` nos campos de sugestão.
+- A identificação é passiva e baseada no número da porta: não coleta banners, não detecta versões e não envia sondagens de aplicação.
+- O protocolo JSON permanece na versão 1.0, com propriedades adicionais e compatíveis.
+- Testes unitários para o mapeamento, estados TCP e integração Java/Python.
 
 ## Tecnologias
 
@@ -101,7 +101,17 @@ Exemplo completo no PowerShell:
 
 A lista aceita portas separadas por vírgula e intervalos inclusivos. Portas repetidas são removidas automaticamente. Cada execução aceita no máximo 1.024 portas únicas, no intervalo de 1 a 65.535.
 
-O resultado JSON informa o alvo, a quantidade de portas consultadas, contagens por estado, lista de portas abertas, duração e horário da execução. O campo `results` contém o estado e a latência observada para cada porta.
+O resultado JSON informa o alvo, a quantidade de portas consultadas, contagens por estado, lista de portas abertas, duração e horário da execução. Cada item em `results` inclui estado e latência; quando a porta aberta possui uma associação convencional conhecida, também inclui uma sugestão de serviço. Essa sugestão não confirma qual aplicação está realmente escutando.
+
+Exemplo de item de resultado:
+
+    {
+      "port": 22,
+      "state": "open",
+      "latency_ms": 2.1,
+      "service_hint": "SSH",
+      "service_hint_method": "well_known_tcp_port"
+    }
 
 ## Parâmetros do motor
 
@@ -138,7 +148,8 @@ Consulte `docs/PROTOCOL.md` para o contrato de comunicação.
 - Tanto Host Discovery quanto Port Scan aceitam somente endereços IPv4 privados RFC 1918 (10/8, 172.16/12 e 192.168/16) e loopback (127/8). IPv6 e endereços públicos são rejeitados.
 - Host Discovery aceita até 1.024 endereços utilizáveis por execução.
 - Port Scan aceita somente um endereço de destino e até 1.024 portas TCP únicas por execução.
-- A varredura usa TCP connect: não envia payloads de aplicação, não faz fingerprint de serviços e não é uma varredura UDP.
+- A varredura usa TCP connect: não envia payloads de aplicação e não é uma varredura UDP.
+- `service_hint` é uma associação convencional baseada no número da porta, fornecida somente para portas abertas conhecidas. Não é fingerprint de protocolo, banner grabbing nem identificação de versão.
 - `open` indica conexão TCP estabelecida; `closed` indica recusa explícita; `filtered` representa timeout ou erro sem recusa explícita e é inconclusivo. Um resultado `filtered` não prova que exista um firewall.
 - A varredura não garante detectar serviços que mudem de estado, limitem conexões ou bloqueiem sondagens.
 - Na descoberta de hosts, `open_ports` representa somente as portas do conjunto de sondagem (22, 53, 80, 443, 445 e 3389).
@@ -153,8 +164,16 @@ Consulte `docs/PROTOCOL.md` para o contrato de comunicação.
 - [x] Testes e pipeline de CI.
 - [x] Descoberta limitada de hosts IPv4 em redes privadas autorizadas.
 - [x] Scanner de portas TCP dedicado para um host IPv4 privado/autorizado.
-- [ ] Detecção básica de serviços.
+- [x] Sugestões básicas de serviço por porta TCP conhecida.
 - [ ] Persistência local com SQLite (histórico, perfis e resultados).
 - [ ] Interface JavaFX, relatórios e comparação de escaneamentos.
 
-**Licença:** ainda não definida.
+## Licença
+
+Este projeto está licenciado sob a **Apache License 2.0**. Consulte o arquivo [LICENSE](LICENSE) para obter o texto completo da licença.
+
+Copyright 2026 Luiz Miguel Rodrigues da Silva Alves.
+
+A licença permite uso, modificação e redistribuição, inclusive para fins comerciais, desde que suas condições sejam respeitadas. Avisos de copyright, atribuição e licença aplicáveis devem ser preservados. Distribuições de versões modificadas também devem indicar os arquivos que foram alterados, conforme a Apache License 2.0.
+
+Consulte também [NOTICE](NOTICE), caso esse arquivo seja incluído em uma distribuição.

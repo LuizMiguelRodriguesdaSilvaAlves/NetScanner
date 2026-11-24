@@ -10,6 +10,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from typing import Any
 
+from .service_detection import get_service_hint
+
 MAX_PORTS = 1024
 MAX_WORKERS = 128
 MIN_TIMEOUT_MS = 100
@@ -152,10 +154,13 @@ def _scan_port(target: str, port: int, *, timeout_seconds: float) -> dict[str, A
         # A timeout or other connection error is inconclusive, not proof the port is closed.
         state = "filtered"
 
+    service_hint = get_service_hint(port) if state == "open" else None
     return {
         "port": port,
         "state": state,
         "latency_ms": round((time.perf_counter() - started) * 1000, 2),
+        "service_hint": service_hint,
+        "service_hint_method": "well_known_tcp_port" if service_hint is not None else None,
     }
 
 

@@ -61,6 +61,8 @@ class PythonEngineClientIntegrationTest {
             assertEquals(1, response.data().get("scanned_ports").asInt());
             assertEquals(1, response.data().get("open_count").asInt());
             assertEquals(port, response.data().get("open_ports").get(0).asInt());
+            assertTrue(response.data().get("results").get(0).has("service_hint"));
+            assertTrue(response.data().get("results").get(0).get("service_hint").isNull());
         }
     }
 
