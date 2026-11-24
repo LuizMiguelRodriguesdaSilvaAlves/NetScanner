@@ -2,24 +2,25 @@
 
 **Network Reconnaissance & Analysis Tool** — ferramenta educacional para descoberta e diagnóstico de dispositivos em redes próprias ou com autorização explícita.
 
-![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-> **Versão 0.4.0:** adiciona sugestões básicas de serviço aos resultados de portas TCP abertas, preservando a descoberta de hosts da v0.2.0, o scanner TCP da v0.3.0 e a integração Java/Python pelo protocolo JSON 1.0.
+> **Versão 0.5.0 (em desenvolvimento):** introduz um dashboard JavaFX para as operações já implementadas, histórico local de varreduras em SQLite e indicadores das execuções recentes.
 
-## O que entrou nesta versão
+## Funcionalidades
 
-- Sugestões de serviço para portas TCP abertas com associações convencionais conhecidas.
-- Cada resultado de porta inclui `service_hint` e `service_hint_method`.
-- Portas fechadas, filtradas ou não mapeadas recebem `null` nos campos de sugestão.
-- A identificação é passiva e baseada no número da porta: não coleta banners, não detecta versões e não envia sondagens de aplicação.
-- O protocolo JSON permanece na versão 1.0, com propriedades adicionais e compatíveis.
-- Testes unitários para o mapeamento, estados TCP e integração Java/Python.
+- **Dashboard JavaFX:** tela principal para executar e acompanhar as operações disponíveis.
+- **Host Discovery:** descoberta limitada de hosts IPv4 em redes privadas autorizadas ou loopback.
+- **TCP Port Scan:** verificação TCP connect em um único IPv4 privado/autorizado, com portas configuráveis.
+- **Service Hints:** sugestões convencionais de serviço baseadas no número de portas TCP abertas conhecidas; não confirmam o protocolo real.
+- **Scan History:** persistência local das execuções bem-sucedidas em SQLite, com tabela de recentes e indicadores no dashboard.
+- **W.I.P.:** Scan Profiles, Reports e Compare Scans aparecem na navegação como itens em desenvolvimento, sem telas ou ações funcionais.
+- O protocolo JSON permanece na versão 1.0 e a interface utiliza o motor Python existente através da camada Java.
 
 ## Tecnologias
 
 | Componente | Tecnologia |
 |---|---|
-| Aplicação/orquestração | Java 17 |
+| Aplicação/orquestração | Java 17 + JavaFX 21 |
 | Build Java | Maven |
 | JSON | Jackson |
 | Motor | Python 3.11+ (biblioteca padrão) |
@@ -28,7 +29,7 @@
 
 ## Pré-requisitos
 
-- JDK 17 ou superior.
+- JDK 17 ou superior (JavaFX 21).
 - Maven 3.9 ou superior.
 - Python 3.11 ou superior.
 - Pytest para testes locais do motor.
@@ -62,7 +63,21 @@ Windows PowerShell:
     $env:NETSCANNER_PYTHON_ENGINE = "../python-engine"
     mvn clean verify
 
-Sem argumentos, a aplicação executa `system.ping` e imprime a confirmação de que Java e Python se comunicaram.
+Para abrir o dashboard JavaFX — Windows PowerShell (na pasta `java-app`):
+
+    $env:NETSCANNER_PYTHON = "py"
+    $env:NETSCANNER_PYTHON_ENGINE = "../python-engine"
+    mvn javafx:run
+
+Linux/macOS:
+
+    NETSCANNER_PYTHON=python3 NETSCANNER_PYTHON_ENGINE=../python-engine mvn javafx:run
+
+O dashboard permite executar Host Discovery e TCP Port Scan, visualizar os resultados e consultar as últimas execuções. O histórico é salvo localmente em SQLite: em `%LOCALAPPDATA%/NetScanner/netscanner.db` no Windows ou em `$XDG_DATA_HOME/netscanner/netscanner.db` (quando definido) / `~/.local/share/netscanner/netscanner.db` no Linux/macOS.
+
+A interface gráfica tem somente o dashboard como tela funcional. Scan Profiles, Reports e Compare Scans permanecem identificados como W.I.P.
+
+A interface CLI anterior continua disponível. Sem argumentos, `mvn exec:java` executa `system.ping` e confirma a comunicação entre Java e Python.
 
 ## Executar Host Discovery
 
@@ -165,8 +180,11 @@ Consulte `docs/PROTOCOL.md` para o contrato de comunicação.
 - [x] Descoberta limitada de hosts IPv4 em redes privadas autorizadas.
 - [x] Scanner de portas TCP dedicado para um host IPv4 privado/autorizado.
 - [x] Sugestões básicas de serviço por porta TCP conhecida.
-- [ ] Persistência local com SQLite (histórico, perfis e resultados).
-- [ ] Interface JavaFX, relatórios e comparação de escaneamentos.
+- [x] Dashboard JavaFX para Host Discovery, TCP Port Scan e resultados recentes.
+- [x] Histórico local de varreduras em SQLite.
+- [ ] Scan Profiles (W.I.P.).
+- [ ] Reports (W.I.P.).
+- [ ] Compare Scans (W.I.P.).
 
 ## Licença
 
