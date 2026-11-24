@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "netscanner-engine"
-version = "0.4.0"
-description = "Python engine for the NetScanner network discovery, TCP scanning, and service hint tool"
+version = "0.5.0"
+description = "Python engine for the NetScanner network scanning, service hints, and scan history tool"
 requires-python = ">=3.11"
 dependencies = []
 

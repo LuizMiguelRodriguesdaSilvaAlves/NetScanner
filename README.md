@@ -19,7 +19,7 @@
 
 | Componente | Tecnologia |
 |---|---|
-| Aplicação/orquestração | Java 17 |
+| Aplicação/orquestração | Java 17 + JavaFX 21 |
 | Build Java | Maven |
 | JSON | Jackson |
 | Motor | Python 3.11+ (biblioteca padrão) |
